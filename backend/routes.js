@@ -2,53 +2,63 @@ const sql = require('./db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt'); // <-- Importamos o bcrypt aqui
 
-// 1. REGISTRO / CADASTRO (Versão Corrigida e com Logs Avançados)
-module.exports = (app) => {
-app.post('/cadastro', async (req, res) => {
+// EXPORTAÇÃO DA FUNÇÃO QUE RECEBE O 'APP' DO SERVER.JS
+module.exports = function(app) {
+
+    // 1. REGISTRO / CADASTRO (Versão com perfil ADMINISTRADOR)
+    app.post('/cadastro', async (req, res) => {
         try {
-            const { nome, email, senha, perfil } = req.body;
+            // Pega os dados e já limpa os espaços do e-mail
+            const nome = req.body.nome;
+            const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
+            const senha = req.body.senha;
+            const perfil = req.body.perfil ? req.body.perfil.toUpperCase() : 'CLIENTE';
+
             const EMAIL_TECNICO_OFICIAL = 'suporte.ti@cesarschool.com.br';
+            const EMAIL_ADMIN_OFICIAL = 'diretoria.ti@cesarschool.com.br';
 
             if (!nome || !email || !senha || !perfil) {
                 return res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
             }
 
-            if (perfil === 'TECNICO' && email.toLowerCase() !== EMAIL_TECNICO_OFICIAL.toLowerCase()) {
+            const perfisValidos = ['CLIENTE', 'TECNICO', 'ADMINISTRADOR'];
+            if (!perfisValidos.includes(perfil)) {
+                return res.status(400).json({ erro: 'Perfil de usuário inválido.' });
+            }
+
+            if (perfil === 'TECNICO' && email !== EMAIL_TECNICO_OFICIAL) {
                 return res.status(403).json({ 
                     erro: 'Cadastro de técnico restrito ao e-mail oficial de suporte.' 
                 });
             }
 
+            if (perfil === 'ADMINISTRADOR' && email !== EMAIL_ADMIN_OFICIAL) {
+                return res.status(403).json({ 
+                    erro: 'Cadastro de administrador restrito ao e-mail oficial da diretoria.' 
+                });
+            }
+
+            // Verifica se o usuário já existe
             const usuarioExistente = await sql.query`SELECT id FROM usuarios WHERE email = ${email}`;
             if (usuarioExistente.recordset.length > 0) {
                 return res.status(400).json({ erro: 'Este e-mail já está em uso.' });
             }
 
-            console.log("-> Gerando hash da senha...");
-            const saltRounds = 8; // Um pouco mais rápido para evitar gargalo de hardware
+            // Criptografa a senha antes de salvar
+            const saltRounds = 8;
             const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
             
-            console.log("-> Hash gerado com sucesso. Tamanho:", senhaCriptografada.length);
-            console.log("-> Tentando inserir no SQL Server...");
-
-            // Inserção explícita envolvendo a variável tratada
+            // Grava de fato o novo usuário no Banco de Dados
             await sql.query`
                 INSERT INTO usuarios (nome, email, senha, perfil, created_at)
                 VALUES (${nome}, ${email}, ${senhaCriptografada}, ${perfil}, GETDATE())
             `;
 
-            console.log("-> Inserido com sucesso!");
             return res.status(201).json({ mensagem: 'Usuário cadastrado com sucesso!' });
 
         } catch (error) {
-            // Se travar no banco, o erro vai aparecer aqui no terminal e a requisição NÃO vai carregar infinito
-            console.error("❌ ERRO CRÍTICO NO CADASTRO:");
-            console.error(error);
-            
-            return res.status(500).json({ 
-                erro: 'Erro interno ao cadastrar usuário', 
-                detalhe: error.message 
-            });
+            console.error("❌ Erro no cadastro:", error);
+            return res.status(500).json({ erro: 'Erro interno ao cadastrar usuário' });
         }
     });
 
@@ -57,7 +67,7 @@ app.post('/cadastro', async (req, res) => {
         try {
             const { email, senha } = req.body;
 
-            // 1º passo: Buscamos o usuário apenas pelo e-mail (trazendo a senha criptografada para comparar no Node)
+            // 1º passo: Buscamos o usuário apenas pelo e-mail
             const result = await sql.query`
                 SELECT id, nome, email, perfil, senha 
                 FROM usuarios
@@ -77,7 +87,7 @@ app.post('/cadastro', async (req, res) => {
                 return res.status(401).json({ erro: 'Usuário ou senha inválidos' });
             }
 
-            // 3º passo: Removemos a senha do objeto 'usuario' antes de gerar o JSON de resposta
+            // 3º passo: Removemos a senha do objeto antes do envio
             delete usuario.senha;
 
             const token = jwt.sign(
@@ -86,7 +96,6 @@ app.post('/cadastro', async (req, res) => {
                 { expiresIn: '1d' }
             );
 
-            // Agora o objeto 'usuario' vai para o front-end 100% livre da senha
             res.json({ usuario, token });
         } catch (error) {
             console.log(error);
@@ -94,7 +103,7 @@ app.post('/cadastro', async (req, res) => {
         }
     });
 
-    // 3. LISTAR CHAMADOS (GET) -> Ajustado com LEFT JOIN para prevenir falhas vazias
+    // 3. LISTAR CHAMADOS (GET)
     app.get('/api/chamados', async (req, res) => {
         try {
             const usuarioIdRaw = req.headers['x-usuario-id'];
@@ -107,8 +116,8 @@ app.post('/cadastro', async (req, res) => {
             const idUsuarioTratado = parseInt(usuarioIdRaw, 10);
             let result;
 
-            if (usuarioPerfil.toUpperCase() === 'TECNICO') {
-                // Mudado para LEFT JOIN para não ignorar chamados sem usuário correspondente
+            if (usuarioPerfil.toUpperCase() === 'TECNICO' || usuarioPerfil.toUpperCase() === 'ADMINISTRADOR') {
+                // Admin e Técnico visualizam a fila inteira de chamados
                 result = await sql.query`
                     SELECT c.*, u.nome as nome_solicitante 
                     FROM chamados c
@@ -130,7 +139,7 @@ app.post('/cadastro', async (req, res) => {
         }
     });
 
-    // 4. CRIAR CHAMADO (POST) -> Centralizado na rota correta com tratamento de tipo INT
+    // 4. CRIAR CHAMADO (POST)
     app.post('/api/chamados', async (req, res) => {
         try {
             const { titulo, descricao, usuario_id } = req.body;
@@ -153,7 +162,7 @@ app.post('/cadastro', async (req, res) => {
         }
     });
 
-    // 5. ATUALIZAR STATUS (PUT) -> Agora mapeado corretamente com /api/
+    // 5. ATUALIZAR STATUS (PUT)
     app.put('/api/chamados/:id', async (req, res) => {
         try {
             const { status } = req.body;
@@ -165,14 +174,14 @@ app.post('/cadastro', async (req, res) => {
                 WHERE id = ${chamadoId}
             `;
 
-            res.json({ mensagem: 'Status do chamado atualizado com sucesso!' });
+            res.json({ mensagem: 'Status do chamado updated com sucesso!' });
         } catch (error) {
             console.log(error);
             res.status(500).json({ erro: 'Erro ao atualizar chamado' });
         }
     });
 
-    // 6. DELETAR (DELETE) -> Agora mapeado corretamente com /api/
+    // 6. DELETAR (DELETE)
     app.delete('/api/chamados/:id', async (req, res) => {
         try {
             const chamadoId = req.params.id;
@@ -186,4 +195,40 @@ app.post('/cadastro', async (req, res) => {
             res.status(500).json({ erro: 'Erro ao deletar chamado' });
         }
     });
-};
+
+    // 7. DASHBOARD / INDICADORES (GET)
+    app.get('/api/dashboard/indicadores', async (req, res) => {
+        try {
+            const result = await sql.query`
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'ABERTO' THEN 1 ELSE 0 END) as abertos,
+                    SUM(CASE WHEN status = 'EM ATENDIMENTO' THEN 1 ELSE 0 END) as em_andamento,
+                    SUM(CASE WHEN status = 'CONCLUÍDO' THEN 1 ELSE 0 END) as concluidos
+                FROM chamados
+            `;
+
+            const dados = result.recordset[0];
+            
+            const total = dados.total || 0;
+            const abertos = dados.abertos || 0;
+            const emAndamento = dados.em_andamento || 0;
+            const concluidos = dados.concluidos || 0;
+
+            const taxaResolucao = total > 0 ? Math.round((concluidos / total) * 100) : 0;
+
+            res.json({
+                total,
+                abertos,
+                emAndamento,
+                concluidos,
+                taxaResolucao
+            });
+
+        } catch (error) {
+            console.error("❌ Erro ao buscar indicadores do dashboard:", error);
+            res.status(500).json({ erro: 'Erro ao carregar indicadores' });
+        }
+    });
+
+}; // <-- FECHAMENTO DA FUNÇÃO EXPORTADA
