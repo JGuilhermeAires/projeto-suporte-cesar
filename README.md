@@ -63,7 +63,8 @@ Vídeo demonstrando o funcionamento completo da aplicação.
 
 ---
 
-## 🚀 Como Executar o Projeto ### Backend
+## 🚀 Como Executar o Projeto 
+### Backend
 bash
 cd backend
 
