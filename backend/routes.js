@@ -1,14 +1,14 @@
 const sql = require('./db');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); // <-- Importamos o bcrypt aqui
+const bcrypt = require('bcrypt');
 
-// EXPORTAÇÃO DA FUNÇÃO QUE RECEBE O 'APP' DO SERVER.JS
+
 module.exports = function(app) {
 
     // 1. REGISTRO / CADASTRO (Versão com perfil ADMINISTRADOR)
     app.post('/cadastro', async (req, res) => {
         try {
-            // Pega os dados e já limpa os espaços do e-mail
+      
             const nome = req.body.nome;
             const email = req.body.email ? req.body.email.trim().toLowerCase() : '';
             const senha = req.body.senha;
@@ -38,17 +38,14 @@ module.exports = function(app) {
                 });
             }
 
-            // Verifica se o usuário já existe
             const usuarioExistente = await sql.query`SELECT id FROM usuarios WHERE email = ${email}`;
             if (usuarioExistente.recordset.length > 0) {
                 return res.status(400).json({ erro: 'Este e-mail já está em uso.' });
             }
 
-            // Criptografa a senha antes de salvar
             const saltRounds = 8;
             const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
-            
-            // Grava de fato o novo usuário no Banco de Dados
+         
             await sql.query`
                 INSERT INTO usuarios (nome, email, senha, perfil, created_at)
                 VALUES (${nome}, ${email}, ${senhaCriptografada}, ${perfil}, GETDATE())
@@ -67,7 +64,6 @@ module.exports = function(app) {
         try {
             const { email, senha } = req.body;
 
-            // 1º passo: Buscamos o usuário apenas pelo e-mail
             const result = await sql.query`
                 SELECT id, nome, email, perfil, senha 
                 FROM usuarios
@@ -80,14 +76,13 @@ module.exports = function(app) {
 
             const usuario = result.recordset[0];
 
-            // 2º passo: O bcrypt compara a senha digitada com o hash salvo no banco
             const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
             if (!senhaValida) {
                 return res.status(401).json({ erro: 'Usuário ou senha inválidos' });
             }
 
-            // 3º passo: Removemos a senha do objeto antes do envio
+       
             delete usuario.senha;
 
             const token = jwt.sign(
@@ -231,4 +226,4 @@ module.exports = function(app) {
         }
     });
 
-}; // <-- FECHAMENTO DA FUNÇÃO EXPORTADA
+};
