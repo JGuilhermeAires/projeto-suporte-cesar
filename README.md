@@ -64,6 +64,7 @@ node server.js
 Servidor disponível em:
 text
 http://localhost:3000
+
 ### Mobile
 bash
 cd mobile
@@ -71,4 +72,7 @@ cd mobile
 npm install
 
 npx expo start
-Após iniciar o Expo: - Abrir o aplicativo Expo Go no celular. - Escanear o QR Code gerado. - Utilizar o sistema normalmente. --- ## 📄 Licença Projeto acadêmico desenvolvido para a disciplina de Projeto Integrador da CESAR School.
+Após iniciar o Expo: - Abrir o aplicativo Expo Go no celular. - Escanear o QR Code gerado. - Utilizar o sistema normalmente.
+
+--- 
+## 📄 Licença Projeto acadêmico desenvolvido para a disciplina de Projeto Integrador da CESAR School.
