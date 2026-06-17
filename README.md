@@ -57,7 +57,7 @@ Além disso, administradores e supervisores possuem acesso a indicadores e dashb
 
 Vídeo demonstrando o funcionamento completo da aplicação.
 
-- [🎥 Clique aqui para assistir](LINK_VIDEO)
+- [🎥 Clique aqui para assistir](https://youtu.be/JH0xc3G2aQQ)
 
 ---
 
