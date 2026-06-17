@@ -21,7 +21,7 @@ Além disso, administradores e supervisores possuem acesso a indicadores e dashb
 ## 📋 Histórias de Usuário
 
 - Quadro Trello contendo as histórias de usuário e o acompanhamento do desenvolvimento.
-- [📄 Clique aqui para acessar o Trello](LINK_TRELLO)
+- [📄 Clique aqui para acessar o Trello](https://trello.com/invite/b/6a32e92356b984f074cd9c32/ATTI5c947b7dd9880b1efcf36752204f64b7463E1060/sistema-de-chamadas-tecnicas)
 
 ---
 
