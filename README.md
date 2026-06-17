@@ -93,10 +93,10 @@ Após iniciar o Expo:
 
 O sistema utiliza:
 
-JWT para autenticação
-Bcrypt para criptografia de senhas
-Controle de perfis de acesso
-Validação de e-mails institucionais para perfis privilegiados
+-JWT para autenticação
+-Bcrypt para criptografia de senhas
+-Controle de perfis de acesso
+-Validação de e-mails institucionais para perfis privilegiados
 
 ---
 
