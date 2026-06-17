@@ -1,102 +1,137 @@
-# Sistema de Chamados Técnicos
+Sistema de Chamados Técnicos
+👥 Integrantes
+João Guilherme Aires Chagas de Oliveira (@JGuilhermeAires)
+🏫 Instituição
 
-## 👥 Integrantes
-- João Guilherme Aires Chagas de Oliveira (@JGuilhermeAires)
-
-## 🏫 Instituição
 CESAR School
 
-## 📌 Descrição do Projeto
+📌 Descrição do Projeto
 
-O Sistema de Chamados Técnicos tem como objetivo facilitar a comunicação entre os usuários da instituição e a equipe de Tecnologia da Informação (TI).
+O Sistema de Chamados Técnicos foi desenvolvido para facilitar a comunicação entre os usuários da instituição e a equipe de Tecnologia da Informação (TI).
 
-Através da plataforma, professores, alunos e funcionários podem registrar chamados técnicos para relatar problemas, solicitar suporte ou comunicar incidentes relacionados aos recursos tecnológicos da instituição. Os chamados são encaminhados aos técnicos de TI, responsáveis pelo atendimento e resolução das solicitações.
+Através da plataforma, professores, alunos e funcionários podem registrar chamados técnicos para relatar problemas, solicitar suporte ou comunicar incidentes relacionados aos recursos tecnológicos da instituição.
 
-Além disso, administradores e supervisores possuem acesso a indicadores e dashboards que permitem acompanhar o desempenho da equipe de suporte.
+Os chamados são encaminhados aos técnicos de TI, responsáveis pelo atendimento e resolução das solicitações. Além disso, administradores possuem acesso a indicadores e dashboards que permitem acompanhar o desempenho da equipe de suporte.
 
----
+🚀 Entrega Única
+📋 Histórias de Usuário
 
-# 🚀 Entrega Única
+Quadro Trello contendo as histórias de usuário e o acompanhamento do desenvolvimento.
 
-## 📋 Histórias de Usuário
+📄 Trello:
+https://trello.com/invite/b/6a32e92356b984f074cd9c32/ATTI5c947b7dd9880b1efcf36752204f64b7463E1060/sistema-de-chamadas-tecnicas
 
-- Quadro Trello contendo as histórias de usuário e o acompanhamento do desenvolvimento.
-- [📄 Clique aqui para acessar o Trello](https://trello.com/invite/b/6a32e92356b984f074cd9c32/ATTI5c947b7dd9880b1efcf36752204f64b7463E1060/sistema-de-chamadas-tecnicas)
+🎨 Protótipo do Sistema
 
----
+Protótipo desenvolvido no Figma com base nos requisitos levantados.
 
-## 🎨 Protótipo do Sistema
+🎨 Link do Figma:
+[INSERIR LINK DO FIGMA]
 
-- Protótipo desenvolvido no Figma com base nos requisitos levantados.
-- [🎨 Clique aqui para acessar o protótipo](LINK_FIGMA)
+🏗️ Arquitetura do Sistema
 
----
+O projeto é composto por:
 
-## ⚙️ Tecnologias Utilizadas
+Aplicação Mobile
 
-### Backend
-- Node.js
-- Express.js
-- JWT
+Responsável pela interação com o usuário, abertura e acompanhamento de chamados.
 
-### Banco de Dados
-- SQL Server
+API Backend
 
-### Mobile
-- React Native
-- Expo
+Responsável pelas regras de negócio, autenticação, gerenciamento dos usuários e chamados.
 
-### Ferramentas
-- Visual Studio Code
-- SQL Server Management Studio (SSMS)
-- GitHub
+Banco de Dados
 
----
+Responsável pela persistência das informações dos usuários e chamados técnicos.
 
-## 🎥 Screencast do Sistema
+👤 Perfis de Usuário
+Cliente
+Abrir chamados
+Consultar seus chamados
+Técnico
+Visualizar chamados
+Atualizar status dos chamados
+Atender solicitações
+Administrador
+Visualizar todos os chamados
+Acompanhar indicadores
+Monitorar o desempenho da equipe
+⚙️ Tecnologias Utilizadas
+Backend
+Node.js
+Express.js
+JWT
+Bcrypt
+Banco de Dados
+SQL Server
+Mobile
+React Native
+Expo
+Ferramentas
+Visual Studio Code
+SQL Server Management Studio (SSMS)
+GitHub
+🗄️ Banco de Dados
+Entidades Principais
+Usuário
+id
+nome
+email
+senha
+perfil
+created_at
+Chamado
+id
+titulo
+descricao
+status
+usuario_id
+created_at
+Relacionamento
+
+Um usuário pode abrir vários chamados.
+
+Um chamado pertence a apenas um usuário.
+
+📖 Documentação da API
+
+A documentação completa da API encontra-se no arquivo:
+
+API.md
+🎥 Screencast do Sistema
 
 Vídeo demonstrando o funcionamento completo da aplicação.
 
-- [🎥 Clique aqui para assistir](https://youtu.be/JH0xc3G2aQQ)
+🎥 YouTube:
+https://youtu.be/JH0xc3G2aQQ
 
----
-
-## 🚀 Como Executar o Projeto
-
-### Backend
-
-```bash
+🚀 Como Executar o Projeto
+Backend
 cd backend
-
 npm install
-
 node server.js
-```
 
 Servidor disponível em:
 
-```text
 http://localhost:3000
-```
-
-### Mobile
-
-```bash
+Mobile
 cd mobile
-
 npm install
-
 npx expo start
-```
 
 Após iniciar o Expo:
 
-- Abrir o aplicativo Expo Go no celular.
-- Escanear o QR Code gerado.
-- Utilizar o sistema normalmente.
+Abrir o aplicativo Expo Go.
+Escanear o QR Code.
+Utilizar o sistema normalmente.
+🔐 Segurança
 
----
+O sistema utiliza:
 
-## 📄 Licença
+JWT para autenticação
+Bcrypt para criptografia de senhas
+Controle de perfis de acesso
+Validação de e-mails institucionais para perfis privilegiados
+📄 Licença
 
 Projeto acadêmico desenvolvido para a disciplina de Projeto Integrador da CESAR School.
