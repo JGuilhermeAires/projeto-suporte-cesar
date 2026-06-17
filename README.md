@@ -25,12 +25,21 @@ Além disso, administradores e supervisores possuem acesso a indicadores e dashb
 - Protótipo desenvolvido no Figma com base nos requisitos levantados.
 - [🎨 Clique aqui para acessar o protótipo](LINK_FIGMA)
 
+## 📖 Documentação da API
+
+A documentação completa da API encontra-se no arquivo:
+
+API.md
+
+---
+
 - ## ⚙️ Tecnologias Utilizadas
 
 - ### Backend
 - Node.js
 - Express.js
 - JWT
+- Bcrypt
 
 ### Banco de Dados
 - SQL Server
@@ -72,7 +81,22 @@ cd mobile
 npm install
 
 npx expo start
-Após iniciar o Expo: - Abrir o aplicativo Expo Go no celular. - Escanear o QR Code gerado. - Utilizar o sistema normalmente.
+Após iniciar o Expo: 
+- Abrir o aplicativo Expo Go no celular.
+- Escanear o QR Code gerado.
+- Utilizar o sistema normalmente.
 
 --- 
+
+## 🔐 Segurança
+
+O sistema utiliza:
+
+JWT para autenticação
+Bcrypt para criptografia de senhas
+Controle de perfis de acesso
+Validação de e-mails institucionais para perfis privilegiados
+
+---
+
 ## 📄 Licença Projeto acadêmico desenvolvido para a disciplina de Projeto Integrador da CESAR School.
